@@ -32,4 +32,17 @@ router.get('/', verifyToken, async (req, res) => {
     }
 });
 
+// backend/routes/registrationRoutes.js
+
+router.get('/myRegistrations', async (req, res) => {
+    const userId = req.userId; // Make sure you're getting the userId from the token or session
+    try {
+        const registrations = await Registration.find({ userId });
+        res.status(200).json(registrations);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching registrations', error: error.message });
+    }
+});
+
+
 module.exports = router;

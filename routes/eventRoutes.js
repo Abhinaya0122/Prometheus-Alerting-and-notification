@@ -67,6 +67,18 @@ router.delete('/:eventId', verifyToken, isAdmin, async (req, res) => {
     }
 });
 
+// backend/routes/eventRoutes.js
+// Add this route to fetch user registrations
+router.get('/my-registrations', verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id; // Get user ID from the token
+        const registrations = await Event.find({ participants: userId }); // Assuming participants are stored in the Event model
+        res.json(registrations);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching registrations', error: error.message });
+    }
+});
+
 // Implement update and delete functionalities as needed...
 
 module.exports = router;
