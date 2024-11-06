@@ -2,18 +2,20 @@
 const express = require('express');
 const Event = require('../models/Event'); // Assume you have an Event model
 const { verifyToken, isAdmin } = require('../middleware/auth'); // Middleware to check token and role
+const mongoose = require('mongoose'); // Import mongoose
 
 const router = express.Router();
 
 // Create new event
 router.post('/', verifyToken, isAdmin, async (req, res) => {
-    const { title, description, date } = req.body;
-    const newEvent = new Event({ title, description, date });
+    console.log("Request to create event received:", req.body); // Log request data for debugging
     try {
-        const savedEvent = await newEvent.save();
-        res.status(201).json(savedEvent);
+        const newEvent = await Event.create(req.body);
+        console.log("Event created successfully:", newEvent); // Log created event for confirmation
+        res.status(201).json(newEvent);
     } catch (error) {
-        res.status(500).json({ message: 'Error creating event', error: error.message });
+        console.error("Error creating event:", error.message); // Log error details
+        res.status(500).json({ message: 'Failed to create event', error: error.message });
     }
 });
 
@@ -27,13 +29,17 @@ router.get('/', async (req, res) => {
     }
 });
 
-// backend/routes/eventRoutes.js
 // Add this route to handle user registration for events
 router.post('/:eventId/register', verifyToken, async (req, res) => {
     try {
         const eventId = req.params.eventId;
-        const userId = req.user.id; // User ID from the token
+        const userId = req.user.userId; 
+        console.log(req.user);
+        console.log(eventId);
 
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
         const event = await Event.findById(eventId);
         if (!event) {
             return res.status(404).json({ message: 'Event not found' });
@@ -43,7 +49,6 @@ router.post('/:eventId/register', verifyToken, async (req, res) => {
             event.participants = [];
         }
 
-        // Check if user is already registered
         if (event.participants.includes(userId)) {
             return res.status(400).json({ message: 'You are already registered for this event' });
         }
@@ -67,17 +72,8 @@ router.delete('/:eventId', verifyToken, isAdmin, async (req, res) => {
     }
 });
 
-// backend/routes/eventRoutes.js
-// Add this route to fetch user registrations
-router.get('/my-registrations', verifyToken, async (req, res) => {
-    try {
-        const userId = req.user.id; // Get user ID from the token
-        const registrations = await Event.find({ participants: userId }); // Assuming participants are stored in the Event model
-        res.json(registrations);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching registrations', error: error.message });
-    }
-});
+
+
 
 // Implement update and delete functionalities as needed...
 
