@@ -72,6 +72,29 @@ router.delete('/:eventId', verifyToken, isAdmin, async (req, res) => {
     }
 });
 
+// backend/routes/eventRoutes.js
+router.put('/:eventId', verifyToken, isAdmin, async (req, res) => {
+    const { eventId } = req.params;
+    const { title, description, date } = req.body;
+
+    try {
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        // Update the event with the new data
+        event.title = title || event.title;
+        event.description = description || event.description;
+        event.date = date || event.date;
+
+        await event.save();
+        res.status(200).json(event); // Return the updated event
+    } catch (error) {
+        console.error('Error updating event:', error.message);
+        res.status(500).json({ message: 'Failed to update event', error: error.message });
+    }
+});
 
 
 
