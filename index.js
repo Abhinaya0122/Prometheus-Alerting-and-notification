@@ -12,6 +12,7 @@ const app = express();
 
 app.use(cors({
     origin: 'http://localhost:3000', // Allow frontend URL
+    origin: 'https://mern-eventmanagement-frontend.onrender.com/',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
   }));
 app.use(express.json()); 
