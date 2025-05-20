@@ -1,0 +1,11 @@
+groups:
+  - name: node_app_alerts
+    rules:
+      - alert: HighRequestRate
+        expr: sum(rate(http_requests_total[1m])) > 2
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High HTTP Request Rate"
+          description: "Your Node.js app is receiving more than 2 requests per second."
