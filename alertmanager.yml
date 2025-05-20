@@ -12,7 +12,7 @@ receivers:
     email_configs:
       - smarthost: 'smtp.gmail.com:587'
         auth_username: 'abhinayashrinivasan2004@gmail.com'
-        auth_password: "jels djjk csso bppj"
+        auth_password: ""
         from: 'abhinayashrinivasan2004@gmail.com'
         to: 'abhinayaps.22cse@kongu.edu'
         headers:
